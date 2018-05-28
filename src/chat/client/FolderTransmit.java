@@ -170,7 +170,7 @@ public class FolderTransmit {
                             sendClient.sendMsg("BeginFolderT");
                             String path = folder.getAbsolutePath();
                             int index = rootPath.length() - folderName.length();
-                            String fPath = path.substring(index);
+                            String fPath = path.substring(index);//子文件夹，例如D：/tools/a ---/tools/a
                             sendClient.sendMsg(fPath);
                             File[] files = folder.listFiles();
                             List<File> listFile = new ArrayList<File>();
@@ -206,6 +206,7 @@ public class FolderTransmit {
                                     len = fis.read(buf);
                                 }
                                 sendClient.getOut().writeInt(len);
+                                System.out.println("发送第一次count" + len);
                                 fis.close();
                                 return true;
                             } catch (FileNotFoundException e) {
@@ -324,6 +325,7 @@ public class FolderTransmit {
 
                             byte[] bs = new byte[BUF_LEN];
                             int count = recvClient.getIn().readInt();
+                            System.out.println("接收第一次count" + count);
                             while(count != -1){
                                 recvClient.getIn().readFully(bs, 0, count);
                                 fos.write(bs, 0, count);
@@ -331,6 +333,7 @@ public class FolderTransmit {
                                 haveRecvLen += count;
                                 setTransferRate(haveRecvLen, folderLen);
                                 count = recvClient.getIn().readInt();
+                                System.out.println("接收第2次count" + count);
                             }
                             fos.close();
                         }else if("EndFolderT".equals(recvCmd)){
